@@ -8,15 +8,22 @@
 
 	let theme: Theme = $state('light');
 	let status: Status = $state('idle');
+	let menuOpen: boolean = $state(false);
 </script>
+
+<svelte:window
+	onkeydown={(event) => {
+		if (event.key === 'Escape') menuOpen = false;
+	}}
+/>
 
 <div class="min-h-dvh bg-bg text-ink {theme === 'dark' ? 'dark' : ''}">
 	<!-- nav -->
-	<header class="border-b border-line">
+	<header class="relative border-b border-line">
 		<div
 			class="mx-auto flex h-[60px] max-w-[1440px] items-center justify-between px-6 lg:h-[72px] lg:px-24"
 		>
-			<a href="/" class="text-[15px] font-semibold lg:text-base">nama.kamu</a>
+			<a href="/" class="text-[15px] font-semibold lg:text-base">dimas.avrian</a>
 
 			<div class="flex items-center gap-2 lg:gap-8">
 				<nav class="hidden items-center gap-7 lg:flex">
@@ -63,7 +70,10 @@
 
 				<button
 					type="button"
-					aria-label="Buka menu"
+					aria-label={menuOpen ? 'Tutup menu' : 'Buka menu'}
+					aria-expanded={menuOpen}
+					aria-controls="menu-mobile"
+					onclick={() => (menuOpen = !menuOpen)}
 					class="flex h-11 w-11 items-center justify-center border border-line lg:hidden"
 				>
 					<svg
@@ -74,12 +84,47 @@
 						stroke="currentColor"
 						stroke-width="1.5"
 						stroke-linecap="round"
+						class={menuOpen ? 'hidden' : 'block'}
 					>
 						<path d="M4 7h16M4 12h16M4 17h16" />
+					</svg>
+					<svg
+						width="18"
+						height="18"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.5"
+						stroke-linecap="round"
+						class={menuOpen ? 'block' : 'hidden'}
+					>
+						<path d="M6 6l12 12M18 6L6 18" />
 					</svg>
 				</button>
 			</div>
 		</div>
+
+		<!-- Panel menu: absolute supaya membuka menu tidak menggeser konten.
+		     Kalau konten bergeser, target scroll Lenis jadi basi dan mendarat
+		     beberapa puluh piksel meleset. -->
+		<nav
+			id="menu-mobile"
+			class="absolute inset-x-0 top-full z-20 border-b border-line bg-bg lg:hidden {menuOpen
+				? 'block'
+				: 'hidden'}"
+		>
+			<div class="mx-auto flex max-w-[1440px] flex-col divide-y divide-line px-6">
+				<a href="#proyek" onclick={() => (menuOpen = false)} class="py-4 text-sm text-muted">
+					Proyek
+				</a>
+				<a href="#tentang" onclick={() => (menuOpen = false)} class="py-4 text-sm text-muted">
+					Tentang
+				</a>
+				<a href="#kontak" onclick={() => (menuOpen = false)} class="py-4 text-sm text-muted">
+					Kontak
+				</a>
+			</div>
+		</nav>
 	</header>
 
 	<!-- hero -->
@@ -87,7 +132,7 @@
 		<h1
 			class="text-[62px] leading-[0.88] font-medium tracking-[-1.6px] lg:text-[232px] lg:tracking-[-9px]"
 		>
-			Nama Kamu
+			Dimas Avrian
 		</h1>
 
 		<div class="mt-7 flex flex-col gap-6">
@@ -119,8 +164,8 @@
 	<!-- band -->
 	<div class="border-t border-line">
 		<img
-			src={theme === 'dark' ? '/images/band-dark.png' : '/images/band-light.png'}
-			alt="Foto kegiatan lab RPL"
+			src="/images/band.jpg"
+			alt="Foto sampul"
 			class="h-[220px] w-full object-cover lg:h-[420px]"
 		/>
 		<div class="mx-auto max-w-[1440px] px-6 py-4 lg:px-24">
@@ -148,7 +193,7 @@
 
 			<div class="mt-7 flex flex-col items-start gap-8 lg:mt-10 lg:flex-row lg:gap-24">
 				<img
-					src={theme === 'dark' ? '/images/portrait-dark.png' : '/images/portrait-light.png'}
+					src="/images/portrait.jpg"
 					alt="Foto profil"
 					class="h-[428px] w-full object-cover lg:h-[525px] lg:w-[420px]"
 				/>
@@ -192,7 +237,7 @@
 			<p class="font-mono text-[11px] tracking-[1.1px]">KONTAK</p>
 
 			<div class="mt-7 flex flex-col gap-8 lg:mt-10 lg:flex-row lg:gap-24">
-				<p class="max-w-[420px] text-[17px] leading-[1.6] text-muted lg:text-xl">
+				<p class="w-full text-[17px] leading-[1.6] text-muted lg:w-[420px] lg:shrink-0 lg:text-xl">
 					Punya pertanyaan atau ingin bekerja sama? Kirim pesan.
 				</p>
 
@@ -206,7 +251,7 @@
 							status = result.type === 'success' ? 'success' : 'error';
 						};
 					}}
-					class="flex w-full flex-col gap-4 lg:w-[440px] lg:shrink-0"
+					class="flex w-full flex-col gap-4 lg:flex-1"
 				>
 					<label class="flex flex-col gap-2">
 						<span class="font-mono text-[11px] tracking-[1.1px] text-muted">NAMA</span>
@@ -336,16 +381,22 @@
 			<div
 				class="flex flex-col items-start gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6"
 			>
-				<a href="mailto:kamu@email.com" class="font-mono text-xs tracking-[1.1px] text-primary">
-					kamu@email.com
+				<a
+					href="mailto:dimasavrian346@gmail.com"
+					class="font-mono text-xs tracking-[1.1px] text-primary"
+				>
+					dimasavrian346@gmail.com
 				</a>
 				<div class="flex items-center gap-6">
 					<a href="#proyek" class="font-mono text-[11px] tracking-[1.1px] text-muted">PROYEK</a>
 					<a
-						href="https://github.com/nama-kamu"
+						href="https://github.com/FForFachriza"
 						class="font-mono text-[11px] tracking-[1.1px] text-muted">GITHUB</a
 					>
-					<a href="mailto:kamu@email.com" class="font-mono text-[11px] tracking-[1.1px] text-muted">
+					<a
+						href="mailto:dimasavrian346@gmail.com"
+						class="font-mono text-[11px] tracking-[1.1px] text-muted"
+					>
 						EMAIL
 					</a>
 				</div>
